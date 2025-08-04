@@ -1,4 +1,4 @@
-package com.example.ecommerce.dto;
+package com.example.ecommerce.dto.auth;
 
 
 import com.example.ecommerce.entity.User;

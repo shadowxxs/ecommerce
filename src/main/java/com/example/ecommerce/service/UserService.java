@@ -1,8 +1,10 @@
 package com.example.ecommerce.service;
 
 
-import com.example.ecommerce.dto.SignupRequest;
+import com.example.ecommerce.dto.auth.SignupRequest;
 import com.example.ecommerce.entity.User;
+import com.example.ecommerce.exception.InvalidPasswordException;
+import com.example.ecommerce.exception.UserAlreadyExistException;
 import com.example.ecommerce.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -22,15 +24,15 @@ public class UserService {
         String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{6,}$";
 
         if (!rawPassword.matches(regex)) {
-            throw new RuntimeException(
+            throw new InvalidPasswordException(
                     "Password harus minimal 6 karakter, mengandung huruf besar, huruf kecil, dan angka"
             );
         }
     }
 
     public User registerUser(SignupRequest request) {
-        if (userRepository.findByUsername(request.getUsername()).isPresent() || userRepository.findByEmail(request.getEmail())  .isPresent()) {
-            throw new RuntimeException("Username / Email sudah dipakai");
+        if (userRepository.findByUsername(request.getUsername()).isPresent() || userRepository.findByEmail(request.getEmail()) .isPresent()) {
+            throw new UserAlreadyExistException("Username / Email sudah dipakai");
         }
 
         validatePassword(request.getPassword());

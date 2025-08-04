@@ -1,5 +1,6 @@
 package com.example.ecommerce.security.jwt;
 
+import com.example.ecommerce.exception.InvalidJwtException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -62,8 +63,10 @@ public class JwtUtil {
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
+        } catch (io.jsonwebtoken.ExpiredJwtException e){
+            throw new InvalidJwtException("Token JWT sudah expired");
         } catch (Exception e) {
-            throw new RuntimeException("Token tidak valid atau Expired", e);
+            throw new InvalidJwtException("Token tidak valid ");
         }
 
 

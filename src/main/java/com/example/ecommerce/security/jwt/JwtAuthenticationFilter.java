@@ -1,6 +1,7 @@
 package com.example.ecommerce.security.jwt;
 
 
+import com.example.ecommerce.exception.InvalidJwtException;
 import com.example.ecommerce.security.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -42,8 +43,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             jwt = authHeader.substring(7);
             try {
                 username = jwtUtil.extractUsername(jwt);
-            } catch (Exception e){
+            } catch (InvalidJwtException e){
                 log.warn("JWT tidak valid: {}", e.getMessage());
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+                response.getWriter().write("{\"message\":\"Token tidak valid atau expired\"}");
+                return;
             }
 
         }
@@ -61,6 +66,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 log.debug("JWT valid, user {} terautentikasi", username);
             } else {
                 log.warn("Token JWT tidak valid untuk user {}", username);
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+                response.getWriter().write("{\"message\":\"Token tidak valid\"}");
+                return;
             }
         }
 
